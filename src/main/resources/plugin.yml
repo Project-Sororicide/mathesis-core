@@ -1,0 +1,16 @@
+name: MathesisCore
+version: 0.1.0
+main: dev.pupwired.mathesis.core.MathesisPlugin
+api-version: '1.21.11'
+description: The core plugin and API for the Mathesis RPG stats and mechanics suite.
+
+commands:
+  mathesis:
+    description: Mathesis admin command
+    usage: /mathesis <reload|place|remove>
+    permission: mathesis.admin
+
+permissions:
+  mathesis.admin:
+    description: Mathesis admin permission
+    default: op
