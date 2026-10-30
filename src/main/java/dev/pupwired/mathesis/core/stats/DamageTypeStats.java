@@ -2,7 +2,7 @@ package dev.pupwired.mathesis.core.stats;
 
 import java.util.List;
 
-/** Naming and definitions for the two stats every damage type gets. */
+/** Naming and definitions for the two stats every damage type gets. Both are percentages, so percent modifiers add points. */
 public final class DamageTypeStats {
 
     private DamageTypeStats() {}
@@ -22,8 +22,8 @@ public final class DamageTypeStats {
      */
     public static List<StatDefinition> definitionsFor(String typeId, double resistCap) {
         return List.of(
-                new StatDefinition(offense(typeId), 0, -100, Double.POSITIVE_INFINITY),
-                new StatDefinition(resist(typeId), 0, -100, resistCap)
+                new StatDefinition(offense(typeId), 0, -100, Double.POSITIVE_INFINITY, true),
+                new StatDefinition(resist(typeId), 0, -100, resistCap, true)
         );
     }
 }

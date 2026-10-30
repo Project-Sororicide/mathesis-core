@@ -1,0 +1,58 @@
+# Item templates. Every top-level key is a template id; /mathesis give <player> <id> [amount] hands one out.
+# Items store only the template id, so editing a template here updates every existing copy after /mathesis reload.
+#
+#   material:    any Bukkit material
+#   name, lore:  MiniMessage text, e.g. '<gold>Steel Pipe'
+#   slot:        where it must be held/worn for its stats to count: hand | offhand | head | chest | legs | feet
+#   damage:      weapons only (slot: hand): base damage per melee hit
+#   damage-type: damage type id of that hit (required with damage)
+#   attack-speed: attacks per second while held (vanilla: sword 1.6, axe 0.9). Vanilla attributes are stripped,
+#                so a weapon without this swings at the bare-hand speed of 4.0. Slot hand only.
+#   stats:       any stat id; a number is flat, a string ending in % is a percent ('10%', '-5%').
+#                A percent scales (base + flat bonuses): '10%' max_health is +2 on the base 20. Stats that are
+#                already percentages (<type>_resist, <type>_damage) just add points, so 15 and '15%' are the same.
+# Stats you list under 'stats: attack_speed' still add on top of attack-speed.
+# Stat and damage lines are added to the lore automatically. All entries below are placeholders.
+
+steel_pipe:
+  material: IRON_SHOVEL
+  name: '<white>Steel Pipe'
+  slot: hand
+  damage: 6
+  damage-type: blunt
+  attack-speed: 1.0
+  lore:
+    - '<dark_gray>Heavy, ugly, effective.'
+
+machete:
+  material: IRON_SWORD
+  name: '<white>Machete'
+  slot: hand
+  damage: 5
+  damage-type: edged
+  attack-speed: 1.6
+
+riot_vest:
+  material: IRON_CHESTPLATE
+  name: '<white>Riot Vest'
+  slot: chest
+  stats:
+    defense: 8
+    max_health: 4
+    blunt_resist: '15%'
+
+welding_goggles:
+  material: LEATHER_HELMET
+  name: '<white>Welding Goggles'
+  slot: head
+  stats:
+    defense: 2
+    fire_resist: '20%'
+
+work_boots:
+  material: LEATHER_BOOTS
+  name: '<white>Work Boots'
+  slot: feet
+  stats:
+    defense: 1
+    movement_speed: 0.005

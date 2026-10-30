@@ -6,12 +6,16 @@ import dev.pupwired.mathesis.core.damage.DamageSettings;
 import dev.pupwired.mathesis.core.damage.DamageType;
 import dev.pupwired.mathesis.core.damage.DamageTypeRegistry;
 import dev.pupwired.mathesis.core.dev.ArmorSpikeListener;
+import dev.pupwired.mathesis.core.dev.HitLog;
+import dev.pupwired.mathesis.core.gear.GearTracker;
+import dev.pupwired.mathesis.core.items.ItemRegistry;
 import dev.pupwired.mathesis.core.stats.BuiltinStats;
 import dev.pupwired.mathesis.core.stats.DamageTypeStats;
 import dev.pupwired.mathesis.core.stats.StatDefinition;
 import dev.pupwired.mathesis.core.stats.StatRegistry;
 import dev.pupwired.mathesis.core.stats.bukkit.PlayerStatManager;
 import org.bukkit.configuration.file.YamlConfiguration;
+import dev.pupwired.mathesis.core.items.ItemFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -26,6 +30,10 @@ public class MathesisPlugin extends JavaPlugin {
     private final DamageSettings damageSettings = new DamageSettings();
     private DamageTypeRegistry damageTypes;
     private PlayerStatManager playerStats;
+    private ItemRegistry items;
+    private ItemFactory itemFactory;
+    private GearTracker gear;
+    private HitLog hitLog;
     private ArmorSpikeListener armorSpike;
 
     public MathesisPlugin() {
@@ -36,12 +44,18 @@ public class MathesisPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         saveResourceIfMissing("damage_types.yml");
+        saveResourceIfMissing("items.yml");
 
         damageTypes = new DamageTypeRegistry(getLogger());
+        items = new ItemRegistry(getLogger(), statRegistry, damageTypes);
+        itemFactory = new ItemFactory(this, items, damageTypes);
         playerStats = new PlayerStatManager(this, statRegistry);
+        gear = new GearTracker(this, playerStats, itemFactory);
+        hitLog = new HitLog();
         armorSpike = new ArmorSpikeListener();
         getServer().getPluginManager().registerEvents(playerStats, this);
-        getServer().getPluginManager().registerEvents(new DamageListener(damageSettings, playerStats), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(damageSettings, playerStats, itemFactory, hitLog), this);
+        getServer().getPluginManager().registerEvents(gear, this);
         getServer().getPluginManager().registerEvents(armorSpike, this);
 
         var command = getCommand("mathesis");
@@ -53,6 +67,7 @@ public class MathesisPlugin extends JavaPlugin {
 
         reload();
         playerStats.attachOnline();
+        gear.start();
     }
 
     @Override
@@ -71,7 +86,10 @@ public class MathesisPlugin extends JavaPlugin {
         getLogger().info("Loaded " + damageTypes.all().size() + " damage type(s).");
         damageSettings.reload(getConfig().getConfigurationSection("damage"), damageTypes, getLogger());
         rebuildStatRegistry();
+        items.load(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "items.yml")));
+        getLogger().info("Loaded " + items.all().size() + " item template(s).");
         playerStats.refreshAll();
+        gear.recomputeAll();
     }
 
     /** Built-in stats plus two stats per damage type. On failure the previous registry stays in place. */
@@ -95,11 +113,17 @@ public class MathesisPlugin extends JavaPlugin {
 
     public DamageTypeRegistry damageTypes() { return damageTypes; }
 
+    public ItemRegistry items() { return items; }
+
+    public ItemFactory itemFactory() { return itemFactory; }
+
     public DamageSettings damageSettings() { return damageSettings; }
 
     public StatRegistry statRegistry() { return statRegistry; }
 
     public PlayerStatManager playerStats() { return playerStats; }
+
+    public HitLog hitLog() { return hitLog; }
 
     public ArmorSpikeListener armorSpike() { return armorSpike; }
 }

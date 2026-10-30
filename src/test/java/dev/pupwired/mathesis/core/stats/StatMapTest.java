@@ -194,11 +194,35 @@ class StatMapTest {
     }
 
     @Test
+    void percentOnABaseZeroStatOnlyScalesWhateverFlatBonusExists() {
+        registry.replaceAll(List.of(new StatDefinition("defense", 0, 0, 1000)));
+        map.refresh();
+        map.setSource("a", List.of(StatModifier.percent("defense", 50)));
+        assertEquals(0, map.get("defense"), EPS);
+        map.setSource("b", List.of(StatModifier.flat("defense", 8)));
+        assertEquals(12, map.get("defense"), EPS); // (0 + 8) * 1.5
+    }
+
+    @Test
+    void percentModifiersAddPointsOnPercentPointStats() {
+        registry.replaceAll(List.of(new StatDefinition("blunt_resist", 0, -100, 90, true)));
+        map.refresh();
+        map.setSource("a", List.of(StatModifier.percent("blunt_resist", 15)));
+        assertEquals(15, map.get("blunt_resist"), EPS);
+        map.setSource("b", List.of(StatModifier.flat("blunt_resist", 10), StatModifier.percent("blunt_resist", 5)));
+        assertEquals(30, map.get("blunt_resist"), EPS); // 15 + 10 + 5 points
+        map.setSource("c", List.of(StatModifier.percent("blunt_resist", 500)));
+        assertEquals(90, map.get("blunt_resist"), EPS); // still capped
+    }
+
+    @Test
     void damageTypeStatsUseDerivedNamesAndCapResist() {
         var defs = DamageTypeStats.definitionsFor("fire", 75);
         assertEquals("fire_damage", defs.get(0).id());
         assertEquals("fire_resist", defs.get(1).id());
         assertEquals(75, defs.get(1).max(), EPS);
         assertEquals(-100, defs.get(1).min(), EPS);
+        assertTrue(defs.get(0).percentPoints());
+        assertTrue(defs.get(1).percentPoints());
     }
 }

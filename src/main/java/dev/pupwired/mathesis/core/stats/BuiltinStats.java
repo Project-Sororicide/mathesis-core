@@ -14,13 +14,16 @@ public final class BuiltinStats {
     public static final String ATTACK_SPEED = "attack_speed";
     public static final String DEFENSE = "defense";
 
+    /** Vanilla bare-hand attack speed. With vanilla attributes stripped, every item swings at this rate unless a template sets its own. */
+    public static final double ATTACK_SPEED_BASE = 4.0;
+
     private BuiltinStats() {}
 
     public static List<StatDefinition> all() {
         return List.of(
                 new StatDefinition(MAX_HEALTH, 20, 1, 1024),
                 new StatDefinition(MOVEMENT_SPEED, 0.1, 0, 1024),
-                new StatDefinition(ATTACK_SPEED, 4.0, 0, 1024),
+                new StatDefinition(ATTACK_SPEED, ATTACK_SPEED_BASE, 0, 1024),
                 new StatDefinition(DEFENSE, 0, 0, Double.POSITIVE_INFINITY)
         );
     }

@@ -5,11 +5,13 @@ import dev.pupwired.mathesis.core.damage.DamageCalculator;
 import dev.pupwired.mathesis.core.message.Message;
 import dev.pupwired.mathesis.core.stats.StatMap;
 import dev.pupwired.mathesis.core.stats.StatModifier;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +38,50 @@ public final class MathesisCommand implements CommandExecutor, TabCompleter {
             Message.COMMAND_RELOADED.sendMessage(sender);
             return true;
         }
+        if (sub.equals("give")) {
+            give(sender, args);
+            return true;
+        }
         if (sub.equals("dev")) {
             dev(sender, label, args);
             return true;
         }
         return usage(sender, label);
+    }
+
+    /** /rpg give <player> <template> [amount]: works from console too, so shops and NPCs can run it. */
+    private void give(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage("Usage: /rpg give <player> <item> [amount]");
+            return;
+        }
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage("Player '" + args[1] + "' is not online.");
+            return;
+        }
+        var template = plugin.items().get(args[2]).orElse(null);
+        if (template == null) {
+            sender.sendMessage("Unknown item '" + args[2] + "'.");
+            return;
+        }
+        int amount = 1;
+        if (args.length >= 4) {
+            try {
+                amount = Integer.parseInt(args[3]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("Amount must be a whole number.");
+                return;
+            }
+            if (amount < 1 || amount > 64) {
+                sender.sendMessage("Amount must be between 1 and 64.");
+                return;
+            }
+        }
+        ItemStack stack = plugin.itemFactory().create(template, amount);
+        target.getInventory().addItem(stack).values()
+                .forEach(left -> target.getWorld().dropItemNaturally(target.getLocation(), left));
+        sender.sendMessage("Gave " + amount + "x " + template.id() + " to " + target.getName() + ".");
     }
 
     private void dev(CommandSender sender, String label, String[] args) {
@@ -53,6 +94,12 @@ public final class MathesisCommand implements CommandExecutor, TabCompleter {
         if (sub.equals("armorspike")) {
             boolean on = plugin.armorSpike().toggle(player.getUniqueId());
             Message.COMMAND_DEV_ARMORSPIKE_TOGGLE.sendMessage(sender, on ? "enabled" : "disabled");
+            return;
+        }
+
+        if (sub.equals("hitlog")) {
+            boolean on = plugin.hitLog().toggle(player.getUniqueId());
+            player.sendMessage("Hit log " + (on ? "enabled" : "disabled") + ".");
             return;
         }
 
@@ -136,7 +183,15 @@ public final class MathesisCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) return List.of("reload", "dev");
+        if (args.length == 1) return List.of("reload", "give", "dev");
+        if (args[0].equalsIgnoreCase("give")) {
+            String typed = args[args.length - 1].toLowerCase(Locale.ROOT);
+            if (args.length == 2) return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName).filter(n -> n.toLowerCase(Locale.ROOT).startsWith(typed)).toList();
+            if (args.length == 3) return plugin.items().all().stream()
+                    .map(item -> item.id()).filter(id -> id.startsWith(typed)).toList();
+            return List.of();
+        }
         if (args[0].equalsIgnoreCase("dev")) {
             if (args.length == 2) return List.of("armorspike", "stats", "mod", "clearmods", "calc");
             if (args[1].equalsIgnoreCase("calc") && args.length == 3) return plugin.damageTypes().all().stream()

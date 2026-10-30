@@ -1,6 +1,13 @@
 package dev.pupwired.mathesis.core.stats;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Per-entity stat values. Every system that affects stats (class, level, attributes, gear...) owns one
@@ -38,7 +45,6 @@ public final class StatMap {
     public double getOrDefault(String stat, double fallback) {
         return registry.contains(stat) ? get(stat) : fallback;
     }
-
 
     /**
      * Replaces everything {@code source} contributes. Validates first: if any modifier targets an unknown
@@ -102,6 +108,10 @@ public final class StatMap {
                     case PERCENT -> percent += modifier.value();
                 }
             }
+        }
+        if (definition.percentPoints()) { // the value is already a percentage: percents are just more points
+            flat += percent;
+            percent = 0;
         }
         double multiplier = Math.max(0, 1 + percent / 100.0);
         return definition.clamp((definition.base() + flat) * multiplier);
