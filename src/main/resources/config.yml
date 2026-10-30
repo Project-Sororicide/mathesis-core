@@ -1,0 +1,38 @@
+# Mathesis main config. Systems add their own sections here as they are built.
+config-version: 1
+
+
+stats:
+  # Highest resistance (in %) any damage type's <type>_resist stat can reach.
+  # Keep it below 100 so stacking gear can never make a player fully immune. Placeholder value.
+  resist-cap: 90
+
+damage:
+  # Applied once, to the total damage left after per-type offense (<type>_damage) and
+  # resistance (<type>_resist). The result is the damage actually dealt.
+  #   Variables: damage, defense
+  #   Functions: min max abs sqrt pow clamp floor ceil round ln
+  #   Operators: + - * / % ^ and parentheses
+  # Default: diminishing returns, defense equal to 5x the hit halves it.
+  # Flat alternative: 'damage - defense'. Test with /mathesis dev calc <type> <amount>.
+  defense-formula: 'damage * (1 - defense / (5 * damage + defense))'
+
+  # Type for entity-caused damage that no mapping below covers. Remove to leave such damage untouched.
+  default-type: blunt
+
+  # Mappings: NAME: damage_type_id. NAME is a Bukkit enum name, case-insensitive. A leading *
+  # matches any name ending the same way ('*_SWORD'); an exact name beats a wildcard, and a longer
+  # wildcard beats a shorter one. Unknown damage types are skipped with a warning.
+  # Everything here is a placeholder; edit freely, then /mathesis reload.
+
+  # Player melee hits, by the item in the main hand (AIR = bare hands).
+  weapons:
+    AIR: blunt
+    STICK: blunt
+    '*_SWORD': edged
+    '*_AXE': edged
+    '*_HOE': edged
+    '*_PICKAXE': piercing
+    '*_SHOVEL': blunt
+    MACE: blunt
+    TRIDENT: piercing

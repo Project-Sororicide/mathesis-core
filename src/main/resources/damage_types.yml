@@ -1,0 +1,18 @@
+# Damage type registry. Every top-level key is a damage type id.
+# Each type automatically gets two stats: <id>_damage and <id>_resist.
+# These five are placeholders; add, rename or remove freely, then /mathesis reload.
+blunt:
+  name: Blunt
+  color: gold
+edged:
+  name: Edged
+  color: red
+piercing:
+  name: Piercing
+  color: gray
+fire:
+  name: Fire
+  color: yellow
+chemical:
+  name: Chemical
+  color: green

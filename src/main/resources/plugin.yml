@@ -1,13 +1,16 @@
-name: MathesisCore
-version: 0.1.0
+name: ${project.name}
+version: ${project.version}
 main: dev.pupwired.mathesis.core.MathesisPlugin
-api-version: '1.21.11'
+api-version: '26.3'
 description: The core plugin and API for the Mathesis RPG stats and mechanics suite.
+
+depend:
+  - LuckyLib
 
 commands:
   mathesis:
     description: Mathesis admin command
-    usage: /mathesis <reload|place|remove>
+    usage: /mathesis <reload|dev>
     permission: mathesis.admin
 
 permissions:
