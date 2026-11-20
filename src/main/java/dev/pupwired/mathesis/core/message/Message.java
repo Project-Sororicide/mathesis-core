@@ -24,6 +24,11 @@ public enum Message implements LuckyMessage {
     COMMAND_DEV_CALC_DAMAGE_TYPE_UNKNOWN("Unknown damage type '%s'.", Color.ERROR),
 
     COMMAND_DEV_CLEARMOD_MODS_CLEARED("Dev modifiers cleared.", Color.PASS),
+
+    COMMAND_DEV_CHECK_USAGE("Usage: /mathesis dev check <skill> <dc|difficulty> [proficiency] [attribute]", Color.WARNING),
+    COMMAND_DEV_CHECK_SKILL_UNKNOWN("Unknown skill '%s'.", Color.ERROR),
+    COMMAND_DEV_CHECK_DC_INVALID("DC must be a whole number.", Color.ERROR),
+    COMMAND_DEV_CHECK_PROFICIENCY_INVALID("Proficiency must be a whole number from -3 to 2.", Color.ERROR),
     ;
 
     private final String string;
