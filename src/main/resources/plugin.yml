@@ -12,8 +12,16 @@ commands:
     description: Mathesis admin command
     usage: /mathesis <reload|dev>
     permission: mathesis.admin
+  attributes:
+    description: View and spend attribute points
+    usage: /attributes [show|spend]
+    aliases: [attr]
+    permission: mathesis.attributes
 
 permissions:
   mathesis.admin:
     description: Mathesis admin permission
     default: op
+  mathesis.attributes:
+    description: Use /attributes
+    default: true

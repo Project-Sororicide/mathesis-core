@@ -29,6 +29,18 @@ public enum Message implements LuckyMessage {
     COMMAND_DEV_CHECK_SKILL_UNKNOWN("Unknown skill '%s'.", Color.ERROR),
     COMMAND_DEV_CHECK_DC_INVALID("DC must be a whole number.", Color.ERROR),
     COMMAND_DEV_CHECK_PROFICIENCY_INVALID("Proficiency must be a whole number from -3 to 2.", Color.ERROR),
+
+    COMMAND_ATTRIBUTES_USAGE("Usage: /%s [show | spend <attribute> [amount]]", Color.WARNING),
+    COMMAND_ATTRIBUTES_UNKNOWN("Unknown attribute '%s'. Attributes: %s", Color.ERROR),
+    COMMAND_ATTRIBUTES_AMOUNT_INVALID("Amount must be a whole number of 1 or more.", Color.ERROR),
+    COMMAND_ATTRIBUTES_NOT_ENOUGH_POINTS("You only have %s unspent attribute point(s).", Color.ERROR),
+    COMMAND_ATTRIBUTES_SPENT("Spent %s point(s) on %s. It is now %s.", Color.PASS),
+    COMMAND_ATTRIBUTES_HEADER("Attributes (%s unspent point(s))", Color.INFO),
+    COMMAND_ATTRIBUTES_LINE("%s: %s (per point: %s)", Color.INFO),
+
+    COMMAND_DEV_ATTR_USAGE("Usage: /mathesis dev attrgrant <amount>", Color.WARNING),
+    COMMAND_DEV_ATTR_GRANTED("Granted %s attribute point(s). Unspent: %s.", Color.PASS),
+    COMMAND_DEV_ATTR_RESET("Attributes reset. Unspent: %s.", Color.PASS),
     ;
 
     private final String string;

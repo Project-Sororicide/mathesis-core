@@ -18,7 +18,9 @@ import java.util.concurrent.ThreadLocalRandom;
 /** /mathesis dev check <skill> <dc> [proficiency] [attribute]: rolls one RP check for testing. */
 final class CheckCommand extends PlayerSubcommand {
 
-    CheckCommand(MathesisPlugin plugin) {}
+    private final MathesisPlugin plugin;
+
+    CheckCommand(MathesisPlugin plugin) { this.plugin = plugin; }
 
     @Override public String name() { return "check"; }
 
@@ -51,7 +53,7 @@ final class CheckCommand extends PlayerSubcommand {
             Message.COMMAND_DEV_CHECK_PROFICIENCY_INVALID.sendMessage(player);
             return;
         }
-        double attribute = 0;
+        double attribute = plugin.attributes().value(player, skill.attribute());
         if (args.length >= 4) {
             try {
                 attribute = Double.parseDouble(args[3]);

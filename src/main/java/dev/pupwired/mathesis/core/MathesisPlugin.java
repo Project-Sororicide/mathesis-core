@@ -1,6 +1,9 @@
 package dev.pupwired.mathesis.core;
 
+import dev.pupwired.mathesis.core.attributes.AttributeSettings;
+import dev.pupwired.mathesis.core.attributes.bukkit.PlayerAttributeManager;
 import dev.pupwired.mathesis.core.command.MathesisCommand;
+import dev.pupwired.mathesis.core.command.attributes.AttributesCommand;
 import dev.pupwired.mathesis.core.damage.DamageListener;
 import dev.pupwired.mathesis.core.damage.DamageSettings;
 import dev.pupwired.mathesis.core.damage.DamageType;
@@ -35,6 +38,8 @@ public class MathesisPlugin extends JavaPlugin {
     private GearTracker gear;
     private HitLog hitLog;
     private ArmorSpikeListener armorSpike;
+    private final AttributeSettings attributeSettings = new AttributeSettings();
+    private PlayerAttributeManager attributes;
 
     public MathesisPlugin() {
         instance = this;
@@ -45,15 +50,18 @@ public class MathesisPlugin extends JavaPlugin {
         saveDefaultConfig();
         saveResourceIfMissing("damage_types.yml");
         saveResourceIfMissing("items.yml");
+        saveResourceIfMissing("attributes.yml");
 
         damageTypes = new DamageTypeRegistry(getLogger());
         items = new ItemRegistry(getLogger(), statRegistry, damageTypes);
         itemFactory = new ItemFactory(this, items, damageTypes);
         playerStats = new PlayerStatManager(this, statRegistry);
+        attributes = new PlayerAttributeManager(this, playerStats, attributeSettings);
         gear = new GearTracker(this, playerStats, itemFactory);
         hitLog = new HitLog();
         armorSpike = new ArmorSpikeListener();
         getServer().getPluginManager().registerEvents(playerStats, this);
+        getServer().getPluginManager().registerEvents(attributes, this);
         getServer().getPluginManager().registerEvents(new DamageListener(damageSettings, playerStats, itemFactory, hitLog), this);
         getServer().getPluginManager().registerEvents(gear, this);
         getServer().getPluginManager().registerEvents(armorSpike, this);
@@ -65,8 +73,16 @@ public class MathesisPlugin extends JavaPlugin {
             command.setTabCompleter(handler);
         }
 
+        var attributesCommand = getCommand("attributes");
+        if (attributesCommand != null) {
+            var handler = new AttributesCommand(this);
+            attributesCommand.setExecutor(handler);
+            attributesCommand.setTabCompleter(handler);
+        }
+
         reload();
         playerStats.attachOnline();
+        attributes.applyAll();
         gear.start();
     }
 
@@ -86,9 +102,12 @@ public class MathesisPlugin extends JavaPlugin {
         getLogger().info("Loaded " + damageTypes.all().size() + " damage type(s).");
         damageSettings.reload(getConfig().getConfigurationSection("damage"), damageTypes, getLogger());
         rebuildStatRegistry();
+        attributeSettings.reload(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "attributes.yml")),
+                statRegistry, getLogger());
         items.load(YamlConfiguration.loadConfiguration(new File(getDataFolder(), "items.yml")));
         getLogger().info("Loaded " + items.all().size() + " item template(s).");
         playerStats.refreshAll();
+        attributes.applyAll();
         gear.recomputeAll();
     }
 
@@ -122,6 +141,8 @@ public class MathesisPlugin extends JavaPlugin {
     public StatRegistry statRegistry() { return statRegistry; }
 
     public PlayerStatManager playerStats() { return playerStats; }
+
+    public PlayerAttributeManager attributes() { return attributes; }
 
     public HitLog hitLog() { return hitLog; }
 

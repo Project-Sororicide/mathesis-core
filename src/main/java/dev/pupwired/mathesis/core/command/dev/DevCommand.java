@@ -24,7 +24,10 @@ public final class DevCommand implements Subcommand {
                 new ModCommand(plugin),
                 new ClearModsCommand(plugin),
                 new CalcCommand(plugin),
-                new CheckCommand(plugin));
+                new CheckCommand(plugin),
+                new AttrGrantCommand(plugin),
+                new AttrResetCommand(plugin)
+        );
     }
 
     @Override public String name() { return "dev"; }

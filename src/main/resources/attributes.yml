@@ -1,0 +1,28 @@
+# What ONE invested point of each attribute gives. Totals are these values times the points invested.
+# Same value format as items.yml: a number is flat, a string ending in % is a percent.
+# For stats that are already percentages (damage, resist, penetration, cooldown...), '1%' and 1 both mean +1 point.
+# For ordinary stats, a percent scales the value: movement_speed '1%' is +1% of the speed.
+
+might:
+  max_health: 2
+  melee_damage: '1%'
+  knockback_resist: '1%'
+
+reflex:
+  attack_speed: '1%'
+  ranged_damage: '1%'
+  movement_speed: '1%'
+
+wits:
+  defense_penetration: '0.5%'
+  healing_power: '1%'
+  # resource_efficiency: TODO class/resource system
+
+resolve:
+  defense: 1
+  # resource_max, crippled_resist: TODO class/resource system and the drawback system
+
+presence:
+  cooldown_reduction: '0.5%'
+  status_resist: '0.5%'
+  # resource_regen: TODO class/resource system
