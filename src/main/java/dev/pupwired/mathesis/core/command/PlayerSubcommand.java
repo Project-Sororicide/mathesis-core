@@ -1,5 +1,6 @@
 package dev.pupwired.mathesis.core.command;
 
+import dev.pupwired.luckylib.api.command.Subcommand;
 import dev.pupwired.mathesis.core.message.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

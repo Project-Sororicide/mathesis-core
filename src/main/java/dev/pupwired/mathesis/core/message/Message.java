@@ -1,7 +1,7 @@
 package dev.pupwired.mathesis.core.message;
 
-import dev.pupwired.luckylib.message.Color;
-import dev.pupwired.luckylib.message.LuckyMessage;
+import dev.pupwired.luckylib.api.message.Color;
+import dev.pupwired.luckylib.api.message.LuckyMessage;
 
 public enum Message implements LuckyMessage {
     // --- Commands ---

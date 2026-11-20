@@ -1,7 +1,7 @@
 package dev.pupwired.mathesis.core.command.dev;
 
+import dev.pupwired.luckylib.api.command.Completions;
 import dev.pupwired.mathesis.core.MathesisPlugin;
-import dev.pupwired.mathesis.core.command.Completions;
 import dev.pupwired.mathesis.core.command.StatSubcommand;
 import dev.pupwired.mathesis.core.message.Message;
 import dev.pupwired.mathesis.core.stats.StatDefinition;

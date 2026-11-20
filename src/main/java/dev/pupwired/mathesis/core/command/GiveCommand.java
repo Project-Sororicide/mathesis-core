@@ -1,5 +1,6 @@
 package dev.pupwired.mathesis.core.command;
 
+import dev.pupwired.luckylib.api.command.Subcommand;
 import dev.pupwired.mathesis.core.MathesisPlugin;
 import dev.pupwired.mathesis.core.items.ItemTemplate;
 import org.bukkit.Bukkit;

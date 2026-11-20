@@ -1,5 +1,6 @@
 package dev.pupwired.mathesis.core.command;
 
+import dev.pupwired.luckylib.api.command.SubcommandRouter;
 import dev.pupwired.mathesis.core.MathesisPlugin;
 import dev.pupwired.mathesis.core.command.dev.DevCommand;
 import dev.pupwired.mathesis.core.message.Message;
