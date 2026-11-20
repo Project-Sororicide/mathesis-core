@@ -1,6 +1,6 @@
 package dev.pupwired.mathesis.core.damage;
 
-import dev.pupwired.mathesis.core.stats.DamageTypeStats;
+import dev.pupwired.mathesis.core.stats.definitions.DamageTypeStats;
 import net.kyori.adventure.text.format.TextColor;
 
 /** A damage type from damage_types.yml. Stat ids are derived from the type id. */

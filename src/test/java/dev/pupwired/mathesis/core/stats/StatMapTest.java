@@ -1,5 +1,6 @@
 package dev.pupwired.mathesis.core.stats;
 
+import dev.pupwired.mathesis.core.stats.definitions.DamageTypeStats;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

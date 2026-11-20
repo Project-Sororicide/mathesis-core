@@ -1,7 +1,7 @@
 package dev.pupwired.mathesis.core.damage;
 
-import dev.pupwired.mathesis.core.stats.BuiltinStats;
-import dev.pupwired.mathesis.core.stats.DamageTypeStats;
+import dev.pupwired.mathesis.core.stats.definitions.BuiltinStats;
+import dev.pupwired.mathesis.core.stats.definitions.DamageTypeStats;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

@@ -1,6 +1,6 @@
 package dev.pupwired.mathesis.core.items;
 
-import dev.pupwired.mathesis.core.stats.BuiltinStats;
+import dev.pupwired.mathesis.core.stats.definitions.BuiltinStats;
 import dev.pupwired.mathesis.core.stats.StatFormat;
 import dev.pupwired.mathesis.core.stats.StatModifier;
 import org.junit.jupiter.api.Test;

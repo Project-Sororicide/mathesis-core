@@ -1,4 +1,6 @@
-package dev.pupwired.mathesis.core.stats;
+package dev.pupwired.mathesis.core.stats.definitions;
+
+import dev.pupwired.mathesis.core.stats.StatDefinition;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package dev.pupwired.mathesis.core.stats.bukkit;
 
-import dev.pupwired.mathesis.core.stats.BuiltinStats;
+import dev.pupwired.mathesis.core.stats.definitions.BuiltinStats;
 import dev.pupwired.mathesis.core.stats.StatListener;
 import dev.pupwired.mathesis.core.stats.StatMap;
 import org.bukkit.NamespacedKey;
@@ -23,10 +23,23 @@ import java.util.Map;
  */
 public final class AttributeBridge implements StatListener {
 
-    private static final Map<String, Attribute> BINDINGS = Map.of(
-            BuiltinStats.MAX_HEALTH, Attribute.MAX_HEALTH,
-            BuiltinStats.MOVEMENT_SPEED, Attribute.MOVEMENT_SPEED,
-            BuiltinStats.ATTACK_SPEED, Attribute.ATTACK_SPEED
+    /** attribute value = offset + scale * stat value */
+    private record Binding(Attribute attribute, double scale, double offset) {
+        static Binding direct(Attribute attribute) { return new Binding(attribute, 1, 0); }
+
+        double desired(double stat) { return offset + scale * stat; }
+    }
+
+    private static final Map<String, Binding> BINDINGS = Map.of(
+            BuiltinStats.MAX_HEALTH, Binding.direct(Attribute.MAX_HEALTH),
+            BuiltinStats.MOVEMENT_SPEED, Binding.direct(Attribute.MOVEMENT_SPEED),
+            BuiltinStats.ATTACK_SPEED, Binding.direct(Attribute.ATTACK_SPEED),
+            BuiltinStats.JUMP_STRENGTH, Binding.direct(Attribute.JUMP_STRENGTH),
+            BuiltinStats.SAFE_FALL_DISTANCE, Binding.direct(Attribute.SAFE_FALL_DISTANCE),
+            // 0-100 points -> 0-1
+            BuiltinStats.KNOCKBACK_RESIST, new Binding(Attribute.KNOCKBACK_RESISTANCE, 0.01, 0),
+            // resist 0 -> multiplier 1.0 (full fall damage), resist 100 -> 0.0 (none)
+            BuiltinStats.FALL_RESIST, new Binding(Attribute.FALL_DAMAGE_MULTIPLIER, -0.01, 1)
     );
 
     private final Player player;
@@ -39,13 +52,13 @@ public final class AttributeBridge implements StatListener {
 
     @Override
     public void onChange(StatMap map, String stat, double value) {
-        Attribute attribute = BINDINGS.get(stat);
-        if (attribute == null) return;
-        AttributeInstance instance = player.getAttribute(attribute);
+        Binding binding = BINDINGS.get(stat);
+        if (binding == null) return;
+        AttributeInstance instance = player.getAttribute(binding.attribute());
         if (instance == null) return;
 
         removeOurs(instance);
-        double amount = value - instance.getBaseValue();
+        double amount = binding.desired(value) - instance.getBaseValue();
         if (Math.abs(amount) > 1e-9) {
             instance.addTransientModifier(new AttributeModifier(
                     key, amount, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.ANY));
@@ -54,8 +67,8 @@ public final class AttributeBridge implements StatListener {
 
     /** Removes everything this bridge applied (player quit, plugin disable). */
     public void detach() {
-        for (Attribute attribute : BINDINGS.values()) {
-            AttributeInstance instance = player.getAttribute(attribute);
+        for (Binding binding : BINDINGS.values()) {
+            AttributeInstance instance = player.getAttribute(binding.attribute());
             if (instance != null) removeOurs(instance);
         }
     }
